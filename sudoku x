@@ -1,0 +1,126 @@
+#include <iostream>
+using namespace std;
+
+bool is_Safe(int b[9][9], int row, int col, int n) {
+
+   // check horizontal
+   
+   for (int i = 0; i < 9; i++) {
+       if (b[row][i] == n) {
+           return false;
+       }
+   }
+   
+   // check vertical
+   
+   for (int i = 0; i < 9; i++) {
+       if (b[i][col] == n) {
+           return false;
+       }
+   }
+   int startRow = row - (row % 3);
+   int startCol = col - (col % 3);
+
+   for (int r = startRow; r < startRow + 3; r++) {
+       for (int c = startCol; c < startCol + 3; c++) {
+           if (b[r][c] == n) {
+               return false;
+           }
+       }
+   }
+   
+   // check diagnol
+   
+   if (row==col){
+       for (int i = 0; i < 9; i++) {
+            if (b[i][i] == n) {
+                return false;
+            }
+        }
+    }
+   
+   if (8 - col == row){
+       for (int i = 8; i >= 0; i--) {
+            if (b[8-i][i] == n) {
+                return false;
+            }
+        }
+    }
+   
+   return true;
+}
+
+void printSudo(int b[9][9]) {
+   cout << "  0 1 2   3 4 5   6 7 8\n";
+   for (int r = 0; r <= 8; r++) {
+       if (r % 3 == 0 && r > 1) {
+           cout << "  ";
+           for (int i = 0; i < 21; i++) {
+               cout << "-";
+           }
+           cout << "\n";
+       }
+       cout << r << " ";
+       for (int c = 0; c <= 8; c++) {
+
+
+           if (c % 3 == 0 && c > 1) {
+               cout << "| ";
+           }
+           if (b[r][c] == 0) {
+               cout << ". ";
+           }
+           else {
+               cout << b[r][c] << " ";
+           }
+       }
+       cout << "\n";
+   }
+}
+
+bool sudoSolve(int b[9][9],int row, int col) {
+    if (row == 8 && col == 9) {
+        return true;
+    }
+    else {
+        if (col == 9) {
+            row++;
+            col = 0;
+        }
+        if (b[row][col] > 0) {
+            return sudoSolve(b,row, col + 1);
+        }
+        for (int n = 1; n <= 9; n++) {
+            if (is_Safe(b, row, col, n)) {
+                b[row][col] = n;
+                if (sudoSolve(b, row, col + 1)) {
+                    return true;
+                }
+                b[row][col] = 0;
+            }
+        }
+    }
+    return false;
+}
+
+int main() {
+   int sudoArray[9][9] {
+       {7, 0, 0, 0, 1, 5, 2, 9, 0},
+       {0, 0, 2, 0, 0, 0, 0, 4, 0},
+       {0, 0, 0, 6, 0, 0, 0, 0, 0},
+       {0, 0, 0, 8, 0, 0, 0, 0, 1},
+       {0, 0, 6, 0, 0, 0, 0, 0, 0},
+       {0, 0, 0, 0, 0, 0, 0, 2, 0},
+       {0, 2, 9, 0, 0, 0, 6, 8, 7},
+       {0, 0, 5, 0, 0, 0, 0, 0, 0},
+       {6, 0, 0, 0, 0, 3, 0, 0, 0}
+   };
+   printSudo(sudoArray);
+   cout << "\n";
+   sudoSolve(sudoArray,0,0);
+   printSudo(sudoArray);
+   
+}
+
+
+ 
